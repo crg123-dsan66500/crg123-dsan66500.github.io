@@ -78,6 +78,8 @@ class BellmansBakeryEnv(gym.Env):
         # Ovens (capacity model)
         self.num_ovens = int(self.cfg.get("num_ovens", 2))
         self.oven_capacity = float(self.cfg.get("oven_capacity", 4.0))
+        # How many customers can be served within a single tick (raise to ease bottleneck)
+        self.serve_per_tick = int(self.cfg.get("serve_per_tick", 3))
 
         # Demand settings
         self.avg_customers_per_day = float(self.cfg.get("avg_customers_per_day", 60))
@@ -89,10 +91,10 @@ class BellmansBakeryEnv(gym.Env):
         self.weekly_item_swing_pct = float(self.cfg.get("weekly_item_swing_pct", 0.10))
 
         # Rewards
-        self.wait_penalty_per_tick = float(self.cfg.get("wait_penalty_per_tick", 0.02))
+        self.wait_penalty_per_tick = float(self.cfg.get("wait_penalty_per_tick", 0.01))
         self.abandon_penalty = float(self.cfg.get("abandon_penalty", 0.5))
         self.serve_bonus = float(self.cfg.get("serve_bonus", 0.1))
-        self.idle_penalty = float(self.cfg.get("idle_penalty", 0.005))
+        self.idle_penalty = float(self.cfg.get("idle_penalty", 0.0))
         self.balk_penalty = float(self.cfg.get("balk_penalty", 0.1))
 
         # Service time (modelled implicitly: one serve action consumes the tick)
@@ -157,7 +159,12 @@ class BellmansBakeryEnv(gym.Env):
 
         if meaning == "serve":
             self.last_action_str = f"serve {ITEM_NAMES[idx]}"
-            reward += self._attempt_serve(idx)
+            # Serve up to 'serve_per_tick' customers this tick if possible
+            for _ in range(max(1, self.serve_per_tick)):
+                gained = self._attempt_serve(idx)
+                if gained <= -0.01:  # no matching customer or no inventory
+                    break
+                reward += gained
         elif meaning == "bake":
             self.last_action_str = f"bake {ITEM_NAMES[idx]}"
             reward += self._attempt_bake(idx)
@@ -174,7 +181,10 @@ class BellmansBakeryEnv(gym.Env):
         if terminated:
             # Waste penalty at day end
             leftover = self.inventory.copy()
-            reward -= float(np.dot(leftover, self.costs))
+            waste_cost = float(np.dot(leftover, self.costs))
+            reward -= waste_cost
+            # Log net profit (sales margin minus leftover cost) for fair evaluation
+            self.profit -= waste_cost
 
         obs = self._obs()
         info = self._info()
@@ -194,7 +204,9 @@ class BellmansBakeryEnv(gym.Env):
     def _reset_sim(self, day_index: int):
         self.day_index = day_index
         self.t = 0
-        self.inventory = np.array([1, 2, 3, 0, 2], dtype=np.int32)  # light buffer
+        # Warm-start inventory (original buffer): slice=6, rolls=4 each, red velvet=2, drip=1
+        # Order: [red_velvet, matcha_roll, strawberry_slice, drip_cake, chocolate_orange_roll]
+        self.inventory = np.array([2, 4, 6, 1, 4], dtype=np.int32)
         self.queue: List[Customer] = []
         self.profit = 0.0
         # Evaluation counters
@@ -412,6 +424,11 @@ class BellmansBakeryEnv(gym.Env):
                     has_space = True
                     break
             mask[5 + i] = has_space
+
+        # If we can serve any customer right now, mask out all bake actions to prioritize service
+        if np.any(mask[:5]):
+            for i in range(5, 10):
+                mask[i] = False
 
         # Idle always allowed
         mask[-1] = True
