@@ -86,10 +86,10 @@ The per-tick reward $r_t$ is:
 
 $$
 r_t = (\text{price}_i - \text{cost}_i)\mathbf{1}\{\text{serve } i\}
-+ 0.1 \mathbf{1}\{\text{serve } i\}
++ 0.1 \, \mathbf{1}\{\text{serve } i\}
 - 0.01 \cdot \text{queue\_length}_t
-- 0.7 \mathbf{1}\{\text{abandon}\}
-- 0.1 \mathbf{1}\{\text{balk}\}.
+- 0.5 \, \mathbf{1}\{\text{abandon}\}
+- 0.1 \, \mathbf{1}\{\text{balk}\}.
 $$
 
 At episode end:

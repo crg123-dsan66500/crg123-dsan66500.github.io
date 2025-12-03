@@ -5190,7 +5190,7 @@ window.Quarto = {
 </table>
 <p>Formal definition: <span class="math display">\[
 R_t
-= \mathrm{profit}_t
+:= \mathrm{profit}_t
 - \lambda_w\,\mathrm{wait\_ticks}_t
 - \lambda_a\,\mathrm{abandon}_t
 - \lambda_b\,\mathrm{balk}_t
@@ -5199,10 +5199,11 @@ R_t
 \]</span></p>
 <p>with<br>
 <span class="math inline">\(\lambda_w = 0.01\)</span>,<br>
-<span class="math inline">\(\lambda_a = 0.7\)</span>,<br>
+<span class="math inline">\(\lambda_a = 0.5\)</span>,<br>
 <span class="math inline">\(\lambda_b = 0.1\)</span>,<br>
 <span class="math inline">\(\lambda_L = 1.0\)</span>,<br>
 <span class="math inline">\(\lambda_s = 0.1\)</span>.</p>
+<p>Note: No idle‑penalty term is included (<span class="math inline">\(\lambda_{\text{idle}} = 0\)</span>). An idle penalty was explored in early iterations but was removed in the final experiments; the environment applies no per‑tick penalty for idle actions.</p>
 <section id="expected-behavioral-differences" class="level3">
 <h3 class="anchored" data-anchor-id="expected-behavioral-differences">Expected behavioral differences</h3>
 <ul>

@@ -151,7 +151,7 @@ RL-internal performance is monitored through TensorBoard rollout and evaluation 
 Formal definition:
 $$
 R_t
-= \mathrm{profit}_t
+:= \mathrm{profit}_t
 - \lambda_w\,\mathrm{wait\_ticks}_t
 - \lambda_a\,\mathrm{abandon}_t
 - \lambda_b\,\mathrm{balk}_t
@@ -161,10 +161,12 @@ $$
 
 with  
 $\lambda_w = 0.01$,  
-$\lambda_a = 0.7$,  
+$\lambda_a = 0.5$,  
 $\lambda_b = 0.1$,  
 $\lambda_L = 1.0$,  
 $\lambda_s = 0.1$.
+
+Note: No idle‑penalty term is included ($\lambda_{\text{idle}} = 0$). An idle penalty was explored in early iterations but was removed in the final experiments; the environment applies no per‑tick penalty for idle actions.
 
 ### Expected behavioral differences
 - **PPO** tends to adopt conservative, waste-minimizing strategies because penalties accumulate over time.  
