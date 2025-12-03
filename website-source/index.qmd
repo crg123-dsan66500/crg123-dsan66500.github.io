@@ -29,6 +29,7 @@ Quickstart and viewer controls are documented in the project README.
 Bellman’s Bakery is a pastel, “tiny bakery tycoon” environment used to study reward–behavior alignment in deep RL. Each episode is a single day with two ovens, five products, stochastic arrivals, and customer patience/abandonment. The work evaluates PPO and QRDQN alongside simple baselines and price bandits under capacity constraints.
 
 At a glance:
+
 - Environment: two-oven production with queueing, bake times, sizes, and yields.
 - Algorithms: PPO (masking) and QRDQN; bandit pricing for daily multipliers.
 - Baselines: newsvendor, bake‑to‑par, greedy‑queue.

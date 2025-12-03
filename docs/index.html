@@ -4870,7 +4870,13 @@ Clip shows baking/serving decisions, oven progress, queue, and current action.
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
 <p>Bellman’s Bakery is a pastel, “tiny bakery tycoon” environment used to study reward–behavior alignment in deep RL. Each episode is a single day with two ovens, five products, stochastic arrivals, and customer patience/abandonment. The work evaluates PPO and QRDQN alongside simple baselines and price bandits under capacity constraints.</p>
-<p>At a glance: - Environment: two-oven production with queueing, bake times, sizes, and yields. - Algorithms: PPO (masking) and QRDQN; bandit pricing for daily multipliers. - Baselines: newsvendor, bake‑to‑par, greedy‑queue. - Key finding: shaped rewards that over‑penalize leftovers/delay lead to conservative, under‑producing policies; pricing has limited leverage under throughput bottlenecks.</p>
+<p>At a glance:</p>
+<ul>
+<li>Environment: two-oven production with queueing, bake times, sizes, and yields.</li>
+<li>Algorithms: PPO (masking) and QRDQN; bandit pricing for daily multipliers.</li>
+<li>Baselines: newsvendor, bake‑to‑par, greedy‑queue.</li>
+<li>Key finding: shaped rewards that over‑penalize leftovers/delay lead to conservative, under‑producing policies; pricing has limited leverage under throughput bottlenecks.</li>
+</ul>
 <p>Run locally (viewer):</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m scripts<span class="op">.</span><span class="fu">run_viewer</span> <span class="op">--</span>model models<span class="op">/</span>best_ppo<span class="op">.</span><span class="fu">zip</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># or run a baseline without a model:</span></span>
